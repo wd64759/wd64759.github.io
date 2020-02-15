@@ -147,7 +147,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://wd64759.github.io/2020/02/14/flink-note/">
+    <link itemprop="mainEntityOfPage" href="https://wd64759.github.io/2020/02/14/learning_flink_1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/LSP.png">
@@ -161,7 +161,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2020/02/14/flink-note/" class="post-title-link" itemprop="url">flink-note</a>
+            <a href="/2020/02/14/learning_flink_1/" class="post-title-link" itemprop="url">Flink学习笔记</a>
         </h1>
 
         <div class="post-meta">
@@ -178,7 +178,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-15 16:27:04" itemprop="dateModified" datetime="2020-02-15T16:27:04+08:00">2020-02-15</time>
+                <time title="修改时间：2020-02-15 17:27:08" itemprop="dateModified" datetime="2020-02-15T17:27:08+08:00">2020-02-15</time>
               </span>
 
           
@@ -192,11 +192,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="Surface-Learning"><a href="#Surface-Learning" class="headerlink" title="Surface Learning"></a>Surface Learning</h2><h3 id="Impala"><a href="#Impala" class="headerlink" title="Impala"></a>Impala</h3><p><a href="https://www.w3cschool.cn/impala/impala_environment.html" target="_blank" rel="noopener">W3 Larning Course</a></p>
-<h3 id="Parquet"><a href="#Parquet" class="headerlink" title="Parquet"></a>Parquet</h3><h3 id="Calcite"><a href="#Calcite" class="headerlink" title="Calcite"></a>Calcite</h3><p>Apache项目中的数据库查询引擎。  </p>
+          <h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><h3 id="使用Docker搭建分布式环境-windows"><a href="#使用Docker搭建分布式环境-windows" class="headerlink" title="使用Docker搭建分布式环境(windows)"></a>使用Docker搭建分布式环境(windows)</h3><ul>
+<li>从flink官网下载Flink Playgound代码</li>
+<li>挂载示例代码中配置文件目录到/var/conf中<br>在windows下本地目录不能直接挂载到docker image中。我们需要将配置文件夹先挂载到docker虚拟机的文件目录。<br>然后才能通过docker启动命令，或docker-compose的配置文件指定挂载方式。因为所有的docker命令都会实际运行在virtual box中。<br>有一个比较奇怪的地方是使用docker而不是docker-compose启动镜像时，可以以相对路径方式挂载命令行当前的windows目录。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -t vboxsf conf /var/conf</span><br><span class="line"><span class="comment"># setup into flink-playgrounds/operations-playground</span></span><br><span class="line"><span class="comment"># 启动服务</span></span><br><span class="line">docker-compose up -d</span><br><span class="line"><span class="comment"># 查看服务列表</span></span><br><span class="line">docker-compose ps</span><br><span class="line"><span class="comment"># 查看日志</span></span><br><span class="line">docker-compose logs -f jobmanager</span><br><span class="line">docker-compose logs -f taskmanager</span><br><span class="line">docker-compose logs -f kafka</span><br><span class="line"><span class="comment"># 进入启动容器中查看</span></span><br><span class="line">docker <span class="built_in">exec</span> -it operationsplayground_jobmanager_1 bash</span><br><span class="line"><span class="comment"># 终止服务</span></span><br><span class="line">docker-compose down -v</span><br></pre></td></tr></table></figure>
 <ul>
-<li><a href="https://www.infoq.cn/article/new-big-data-hadoop-query-engine-apache-calcite/" target="_blank" rel="noopener">Intro</a> </li>
-<li><a href="https://calcite.apache.org/docs/adapter.html" target="_blank" rel="noopener">Adapters</a><h3 id="Flink"><a href="#Flink" class="headerlink" title="Flink"></a>Flink</h3></li>
+<li>服务管理<blockquote>
+<p>Web console: <a href="http://localhost:8081" target="_blank" rel="noopener">http://localhost:8081</a> (使用virtual box的IP地址替换localhost)<br>RESTful API: curl localhost:8081/jobs</p>
+</blockquote>
+</li>
 </ul>
 
       
