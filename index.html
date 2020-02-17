@@ -172,7 +172,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-02-17 22:17:01 / 修改时间：23:12:00" itemprop="dateCreated datePublished" datetime="2020-02-17T22:17:01+08:00">2020-02-17</time>
+              <time title="创建时间：2020-02-17 22:17:01 / 修改时间：23:23:13" itemprop="dateCreated datePublished" datetime="2020-02-17T22:17:01+08:00">2020-02-17</time>
             </span>
 
           
@@ -198,7 +198,7 @@
 <p>Flink在JVM内部实现自己的内存管理</p>
 </blockquote>
 <h2 id="API设计"><a href="#API设计" class="headerlink" title="API设计"></a>API设计</h2><p>API层分为面向无界stream的流处理API, 和面向batch的批处理API。<br>API抽象层次从底层控制到SQL封装。</p>
-<p><img style="display:inline;" src="https://upload-images.jianshu.io/upload_images/4092059-e1cb446b2c5f8459.png?imageMogr2/auto-orient/strip|imageView2/2/w/974/format/webp" width="600px"/><img style="display:inline;padding-left: 40px;" src="https://upload-images.jianshu.io/upload_images/4092059-b6ff29d09ba6da97.png?imageMogr2/auto-orient/strip|imageView2/2/w/781/format/webp" width="600px"/></p>
+<p><img style="display:inline;" src="img/flinkapi_layer.png" width="600px"/><img style="display:inline;padding-left: 40px;" src="img/flinkapi_design.png" width="600px"/></p>
 <h2 id="用户接口"><a href="#用户接口" class="headerlink" title="用户接口"></a>用户接口</h2><ul>
 <li>Stream: 中间结果</li>
 <li>Transformation: 数据操作，可以对一个或多个Stream进行处理。他们共同组成DAG结构。<br>Flink对Stream和Transformation的处理都是并行的。Stream -&gt; Stream Partitions, Operator -&gt; Operator Subtask。</li>
