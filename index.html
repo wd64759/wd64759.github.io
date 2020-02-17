@@ -172,7 +172,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-02-17 22:17:01 / 修改时间：23:23:13" itemprop="dateCreated datePublished" datetime="2020-02-17T22:17:01+08:00">2020-02-17</time>
+              <time title="创建时间：2020-02-17 22:17:01 / 修改时间：23:49:49" itemprop="dateCreated datePublished" datetime="2020-02-17T22:17:01+08:00">2020-02-17</time>
             </span>
 
           
@@ -186,22 +186,36 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="Flink基本概念"><a href="#Flink基本概念" class="headerlink" title="Flink基本概念"></a>Flink基本概念</h1><h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><h3 id="状态管理"><a href="#状态管理" class="headerlink" title="状态管理"></a>状态管理</h3><blockquote>
+          <h1 id="Flink的设计"><a href="#Flink的设计" class="headerlink" title="Flink的设计"></a>Flink的设计</h1><h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><h3 id="状态管理"><a href="#状态管理" class="headerlink" title="状态管理"></a>状态管理</h3><blockquote>
 <ul>
-<li>Exactly-one Guarantee 的实现<br>  基本原理：周期性快照(state_snapshot) + Event log(pos_x) 位置记录。即state_snapshot@pos_x<br>  分布式环境下每个节点都保存各自的快照与日志位置，形成总的checkpoint.</li>
-<li>Event Time<br>支持事件时间语义的流处理</li>
-<li>灵活的窗口操作<br>支持基于time, count, session 以及 data-driven的窗口操作。窗口用于对流的聚合操作。</li>
-<li>Savepoints<br>支持手工触发的状态保存。</li>
+<li>Exactly-one 的实现<br>  基本原理：周期性快照(state_snapshot) + Event log(pos_x) 位置记录。即state_snapshot@pos_x<br>  分布式环境下每个节点都保存各自的快照与日志位置，形成总的checkpoint.</li>
+<li>Event Time  <ul>
+<li>Event time: 事件自己定义的时间戳。(Event Producer在交给Flink平台是已经创建好)  </li>
+<li>Ingestion time: 事件进入Flink数据流的source时间。  </li>
+<li>Processing time: 某个Operator对事件处理的本地系统时间。</li>
+</ul>
+</li>
+<li>灵活的窗口操作<br>支持基于time, count, session 以及 data-driven的窗口操作。在流式处理中，窗口决定了对流数据的聚合操作的间隔。</li>
+<li>有状态数据操作<ul>
+<li>状态信息可以以key/value形式分布存储在各数据流中。只能通过keyBy()函数访问。<br>一种是内存中的Hash map，另一种是存在Rocksdb（KV存储）中</li>
+</ul>
+</li>
+<li>Savepoints<br>支持手工触发的状态保存。保存点是手动触发的，触发时会将它写入状态后端。</li>
 </ul>
 </blockquote>
 <h3 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h3><blockquote>
 <p>Flink在JVM内部实现自己的内存管理</p>
 </blockquote>
 <h2 id="API设计"><a href="#API设计" class="headerlink" title="API设计"></a>API设计</h2><p>API层分为面向无界stream的流处理API, 和面向batch的批处理API。<br>API抽象层次从底层控制到SQL封装。</p>
-<p><img style="display:inline;" src="img/flinkapi_layer.png" width="600px"/><img style="display:inline;padding-left: 40px;" src="img/flinkapi_design.png" width="600px"/></p>
+<p><img style="display:inline;" src="img/flinkapi_layer.png" width="500px"/><img style="display:inline;padding-left: 40px;" src="img/flinkapi_design.png" width="500px"/></p>
 <h2 id="用户接口"><a href="#用户接口" class="headerlink" title="用户接口"></a>用户接口</h2><ul>
 <li>Stream: 中间结果</li>
-<li>Transformation: 数据操作，可以对一个或多个Stream进行处理。他们共同组成DAG结构。<br>Flink对Stream和Transformation的处理都是并行的。Stream -&gt; Stream Partitions, Operator -&gt; Operator Subtask。</li>
+<li>Transformation: 数据操作，可以对一个或多个Stream进行处理。他们共同组成DAG结构。<br>Flink对Stream和Transformation的处理都是并行的。在并行设计下Stream被拆分成Stream Partitions, Operator在并行任务中也变成Operator Subtask。</li>
+</ul>
+<h2 id="运行期进程"><a href="#运行期进程" class="headerlink" title="运行期进程"></a>运行期进程</h2><ul>
+<li>JobManagers<br>master, 调度任务，协调checkpoint。可以有多个，但只有一个leader。</li>
+<li>TaskManagers<br>workers, 执行数据流或子任务。每个Worker(Task Manager)是一个JVM进程。<br>TaskManager会将内存抽象成多个TaskSlot，用于执行Task任务。每个Task Slot代表固定的资源子集。目前Task Slot没有对CPU进行隔离，仅是针对内存。<br>实践中，比较好的每个TaskManager的task slot的默认数量最好是CPU的核数。</li>
+<li>Client<br>任务提交者。可以断开或保持连接以获取任务状态。<img src="img/flinkproc.png"></li>
 </ul>
 
       
